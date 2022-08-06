@@ -1,13 +1,13 @@
 
 class relationship:
     # initialization
-    def __init__(self,myname:str, fname: list, bname: list) -> None:
+    def __init__(self,myname:str, fname: list) -> None:
         self.myname = myname
-        self.depth = 0         # hold own relative position
-        self.fname = fname     # name list of forward items
-        self.bname = bname     # name list of backward items
-        self.fins  = []        # instance list of forward
-        self.bins  = []        # instance list of backward
+        self.depth = 0          # hold own relative position
+        self.fname = fname      # name list of forward items
+        self.bname = []         # name list of backward items
+        self.fins  = []         # instance list of forward
+        self.bins  = []         # instance list of backward
     
     def __str__(self) -> str:
         return self.myname  #, self.depth, self.fname, 
@@ -18,6 +18,7 @@ class relationship:
     
     def add_bins(self, ins: object) -> None:
         self.bins.append(ins)
+        self.bname.append(ins.get_myname())
 
     # set depth
     def set_fdepth(self, depth: int) -> None:
