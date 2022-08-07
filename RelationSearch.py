@@ -1,7 +1,3 @@
-from operator import truediv
-from tkinter import E
-from readxlsx import readxlsx
-
 class relationship:
     # initialization
     def __init__(self,myname:str) -> None:
@@ -65,6 +61,7 @@ def link_forward(rel: relationship, d_link: dict, d_name: dict) -> None:
         
 
 if __name__ == "__main__":
+    from readxlsx import readxlsx
     FILENAME = "jobconnection.xlsx"
     linkval = readxlsx(FILENAME, "Sheet1")
     dict_link = linkval.get_link(s_col=1, e_col=2)
