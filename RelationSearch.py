@@ -1,3 +1,6 @@
+from inspect import getfile
+
+
 class relationship:
     # initialization
     def __init__(self,myname:str) -> None:
@@ -57,8 +60,15 @@ def link_forward(rel: relationship, d_link: dict, d_name: dict) -> None:
         else:
             link_forward(d_link[elmt], d_link, d_name)
 
-            
-        
+def get_flink(rel: relationship, d_depth: dict, depth: int) -> None:
+    d_fwd = rel.get_forward()
+    for key in d_fwd.keys():
+        if key in d_depth:
+            if d_depth[key] > depth:
+                d_depth[key] = depth
+        else:
+            d_depth[key] = depth
+        get_flink(d_fwd[key], d_depth, depth - 1)
 
 if __name__ == "__main__":
     from readxlsx import readxlsx
