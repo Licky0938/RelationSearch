@@ -1,109 +1,81 @@
+from operator import truediv
+from tkinter import E
+from readxlsx import readxlsx
 
 class relationship:
     # initialization
-    def __init__(self,myname:str, fname: list) -> None:
-        self.myname = myname
-        self.depth = 0          # hold own relative position
-        self.fname = fname      # name list of forward items
-        self.bname = []         # name list of backward items
-        self.fins  = []         # instance list of forward
-        self.bins  = []         # instance list of backward
+    def __init__(self,myname:str) -> None:
+        self.__myname = myname
+        self.__forward  = {}    # name:instance dictionary
+        self.__backward = {}    # name:instance dictionary
     
     def __str__(self) -> str:
-        return self.myname  #, self.depth, self.fname, 
+        return self.__myname  #, self.depth, self.__fname, 
     
     # add instance
-    def add_fins(self, ins: object) -> None:
-        self.fins.append(ins)
+    def add_forward(self, key: str, ins: object) -> None:
+        if key not in self.__forward:
+            self.__forward[key] = ins
     
-    def add_bins(self, ins: object) -> None:
-        self.bins.append(ins)
-        self.bname.append(ins.get_myname())
-
-    # set depth
-    def set_fdepth(self, depth: int) -> None:
-        if self.depth > depth:
-            self.depth = depth
-    
-    def set_bdepth(self, depth: int) -> None:
-        if self.depth < depth:
-            self.depth = depth
+    def add_backward(self, key:str, ins: object) -> None:
+        if key not in self.__backward:
+            self.__backward[key] = ins
     
     # get members
     def get_myname(self) -> str:
-        return self.myname
+        return self.__myname
+
+    def get_forward(self) -> dict:
+        return self.__forward
     
-    def get_depth(self) -> int:
-        return self.depth
-
-    def get_fname(self) -> list:
-        return self.fname
+    def get_backward(self) -> dict:
+        return self.__backward
     
-    def get_bname(self) -> list:
-        return self.bname
+    def get_forkeys(self) -> list:
+        return self.__forward.keys()
     
-    def get_fins(self) -> list:
-        return self.fins
-    
-    def get_bins(self) -> list:
-        return self.bins
-    
+    def get_backkeys(self) -> list:
+        return self.__backward.keys()
 
+# counter = 0
 
-dict = {}
-dict["A"] = relationship("A", []                  , ["D", "E"])
-dict["B"] = relationship("B", []                  , ["E", "F", "L"])
-dict["C"] = relationship("C", []                  , ["F", "G"])
-dict["D"] = relationship("D", ["A"]               , ["H"])
-dict["E"] = relationship("E", ["A", "B"]          , ["F", "I"])
-dict["F"] = relationship("F", ["B", "E"]          , ["L"])
-dict["G"] = relationship("G", ["C"]               , ["I"])
-dict["H"] = relationship("H", ["D"]               , ["K"])
-dict["I"] = relationship("I", ["E", "G"]          , ["J", "K", "M"])
-dict["J"] = relationship("J", ["I"]               , ["K", "L"])
-dict["K"] = relationship("K", ["H", "I", "J"]     , ["L"])
-dict["L"] = relationship("L", ["B", "F", "J", "K"], [])
-dict["M"] = relationship("M", ["C", "I"]          , ["N"])
-dict["N"] = relationship("N", ["C", "M"]          , [])
-dict["O"] = relationship("O", []                  , ["R"])
-dict["P"] = relationship("P", []                  , ["R"])
-dict["Q"] = relationship("Q", []                  , ["R", "S"])
-dict["R"] = relationship("R", ["O", "P", "Q"]     , ["T", "U", "V"])
-dict["S"] = relationship("S", ["Q"]               , ["T", "U", "V"])
-dict["T"] = relationship("T", ["R", "S"]          , ["W"])
-dict["U"] = relationship("U", ["R", "S"]          , ["W", "X"])
-dict["V"] = relationship("V", ["R", "S"]          , ["X", "Y"])
-dict["W"] = relationship("W", ["T", "U"]          , [])
-dict["X"] = relationship("X", ["U", "V"]          , ["Z"])
-dict["Y"] = relationship("Y", ["V"]               , ["Z"])
-dict["Z"] = relationship("Z", ["X", "Y"]          , [])
+def add_links(forward: relationship, backward: relationship) -> None:
+    forward.add_backward(backward.get_myname(), backward)
+    backward.add_forward(forward.get_myname(), forward)
 
-Depth = {}
+def get_flength(ins: relationship) -> int:
+    return len(ins.get_forkeys())
 
-def connect_frels(rel: relationship, depth: int):
-    rel.set_fdepth(depth)
-    Depth[rel.get_myname()] = rel.get_depth()
-    print(rel.get_myname(), rel.get_depth())
-    if len(rel.fname) > 0:
-        for elmt in rel.fname:
-            rel.add_fins(dict[elmt])
-            connect_frels(dict[elmt], depth - 1)
-    else:
-        print("end")
+def link_forward(rel: relationship, d_link: dict, d_name: dict) -> None:
+    # global counter
+    for elmt in d_name[rel.get_myname()]:
+        # counter += 1
+        if elmt not in d_link:
+            # print("in not")
+            d_link[elmt] = relationship(elmt)
+        add_links(forward=d_link[elmt], backward=rel)
+        # print("me:", rel.get_myname(), "for:", d_link[elmt].get_myname())
+        if elmt not in d_name or len(d_name[elmt]) == get_flength(d_link[elmt]):
+            # print("already exist")
+            continue
+        else:
+            link_forward(d_link[elmt], d_link, d_name)
 
-def connect_brels(rel: relationship, depth: int):
-    rel.set_bdepth(depth)
-    Depth[rel.get_myname()] = rel.get_depth()
-    print(rel.get_myname(), rel.get_depth())
-    if len(rel.bname) > 0:
-        for elmt in rel.bname:
-            rel.add_bins(dict[elmt])
-            connect_brels(dict[elmt], depth + 1)
-    else:
-        print("end")
+            
+        
 
-connect_frels(dict["I"], 0)
-connect_brels(dict["I"], 0)
-for key in Depth.keys():
-    # print(key)
-    print(key, Depth[key])
+if __name__ == "__main__":
+    FILENAME = "jobconnection.xlsx"
+    linkval = readxlsx(FILENAME, "Sheet1")
+    dict_link = linkval.get_link(s_col=1, e_col=2)
+    dict_master = {}
+    for key in dict_link.keys():
+        dict_master[key] = relationship(key)
+
+    for key in sorted(dict_link.keys(), reverse=True):
+        # counter = 0
+        link_forward(dict_master[key], dict_master, dict_link)
+        print("[System]", key, "linked")
+
+    for key in sorted(dict_master.keys()):
+        print(dict_master[key].get_myname(), list(dict_master[key].get_forkeys()), list(dict_master[key].get_backkeys()))
