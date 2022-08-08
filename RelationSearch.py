@@ -1,7 +1,3 @@
-from inspect import getfile
-from turtle import back
-
-
 class relationship:
     # initialization
     def __init__(self,myname:str) -> None:
