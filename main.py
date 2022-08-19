@@ -1,24 +1,32 @@
 from readxlsx import readxlsx as rxlx
-import RelationSearch as rels
+from RelationSearch import relationship as rels
+from RelationSearch import link
+from RelationSearch import search as srch
 
 sourcefile = "jobconnection.xlsx"
 targetfile = "jobtarget.xlsx"
 
-t_xlx = rxlx(targetfile, "Sheet1")
-s_xlx = rxlx(sourcefile, "Sheet1")
+
+s_xlx = rxlx(sourcefile, 0)
+t_xlx = rxlx(targetfile, 0)
 t_lst = t_xlx.get_targetlist(1)
 
+# dictionary[ownname] = [jobname0, jobname1, jobname2, ...]
 dict_link = s_xlx.get_link(1, 2, t_lst)
+# dictionary[ownname] = rels.relationship(ownname)
 dict_master = {}
 
 for key in dict_link:
-    dict_master[key] = rels.relationship(key)
-    # print(key)
-a = dict_master["I"]
-a.add_link("forward", "J", dict_master["J"])
+    dict_master[key] = rels(key)
 
-# for key in sorted(dict_link.keys()):
-#     rels.link_forward(dict_master[key], dict_master, dict_link)
+for key in dict_link.keys():
+    link.link_forward(dict_master[key], dict_master, dict_link)
+
+# for key in sorted(dict_master.keys()):
+#     link = dict_master[key].get_linkall()
+#     if key in dict_link:
+#         print("[origin]", key, set(dict_link[key]))
+#     print("[relation]", key, set(link["forward"].keys()), set(link["backward"].keys()))
 
 # set_other = set(dict_master.keys()) - set(t_lst)
 # for key in dict_master:
