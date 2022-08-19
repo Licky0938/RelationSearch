@@ -1,11 +1,10 @@
-from distutils.ccompiler import gen_lib_options
 import openpyxl
 
 class readxlsx:
-    def __init__(self, bookname: str, sheetname: str) -> None:
+    def __init__(self, bookname: str, sheetnum: int) -> None:
         self.wb = openpyxl.load_workbook(bookname)
-        self.ws = self.wb[sheetname]
-        print("[System]", "xlsx file read")
+        self.ws = self.wb.worksheets[sheetnum]
+        print("[System]", bookname, "read")
 
     # private functions
     def __get_rowrange(self, col: int) -> int:
@@ -42,10 +41,10 @@ class readxlsx:
         t_2d = self.__getgen_bycol(s_col, e_col)
         return ([[cell.value for cell in row] for row in t_2d])
     
-    def gen_linkdict(self, l_2d: list, target:list =None) -> dict:
+    def gen_linkdict(self, l_2d: list, target:list = None) -> dict:
         link = {}
         if len(l_2d[0]) < 2:
-            print("[Error]", "does not match size")
+            print("[Error]", self, "does not match size")
             return None
         if target is None:
             for l_val in l_2d:
@@ -61,6 +60,7 @@ class readxlsx:
                     for i in range(1, len(l_val)):
                         link[l_val[0]].append(l_val[i])
 
+        print("[System]", "link dictionary generated")
         return link
     
     def get_link(self, s_col: int, e_col: int, target: list =None) -> dict:
