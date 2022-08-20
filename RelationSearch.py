@@ -55,31 +55,37 @@ class search:
     def __init__(self) -> None:
         self.__hierarchy = {}
     
-    def search_relation(self, direction: str, rel: relationship, mode: int = 1, depth: int = 0) -> None:
+    @classmethod
+    def search_relation(cls, rel: relationship, d_result:dict, direction: str, increment: int, mode: int = 1, depth: int = 0) -> None:
         d_link = rel.get_link(direction)
         for key in d_link.keys():
-            if key in self.__hierarchy:
-                if abs(self.__hierarchy[key]) * mode < abs(depth) * mode:
-                    self.__hierarchy[key] = depth
+            if key in d_result:
+                if abs(d_result[key]) * mode < abs(depth) * mode:
+                    d_result[key] = depth
                 continue
             else:
-                self.__hierarchy[key] = depth
-            self.search_relation(direction, d_link[key], mode, depth + 1 if direction == "backward" else depth - 1)
+                d_result[key] = depth
+            cls.search_relation(d_link[key], d_result, direction, increment, mode, depth + increment)
 
+    @classmethod
+    def get_relation(cls, rel: relationship, direction: str, mode: int = 1, depth: int = 0) -> dict:
+        d_result = {}
+        cls.search_relation(rel, d_result, direction, 1 if direction == "forward" else -1, mode, depth)
+        return d_result
 
 if __name__ == "__main__":
     from readxlsx import readxlsx
-    FILENAME = "jobconnection.xlsx"
-    linkval = readxlsx(FILENAME, "Sheet1")
-    dict_link = linkval.get_link(s_col=1, e_col=2)
-    dict_master = {}
-    for key in dict_link.keys():
-        dict_master[key] = relationship(key)
+    # FILENAME = "jobconnection.xlsx"
+    # linkval = readxlsx(FILENAME, "Sheet1")
+    # dict_link = linkval.get_link(s_col=1, e_col=2)
+    # dict_master = {}
+    # for key in dict_link.keys():
+    #     dict_master[key] = relationship(key)
 
-    for key in sorted(dict_link.keys(), reverse=True):
-        # counter = 0
-        link_forward(dict_master[key], dict_master, dict_link)
-        print("[System]", key, "linked")
+    # for key in sorted(dict_link.keys(), reverse=True):
+    #     # counter = 0
+    #     link_forward(dict_master[key], dict_master, dict_link)
+    #     print("[System]", key, "linked")
 
-    for key in sorted(dict_master.keys()):
-        print(dict_master[key].get_myname(), list(dict_master[key].get_forkeys()), list(dict_master[key].get_backkeys()))
+    # for key in sorted(dict_master.keys()):
+    #     print(dict_master[key].get_myname(), list(dict_master[key].get_forkeys()), list(dict_master[key].get_backkeys()))
