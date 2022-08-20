@@ -1,8 +1,11 @@
+FORWARD = "forward"
+BACKWARD = "backward"
+
 class relationship:
     # initialization
     def __init__(self,myname:str) -> None:
         self.__myname = myname
-        self.__link = {"forward": {}, "backward": {}}
+        self.__link = {FORWARD: {}, BACKWARD: {}}
     
     def __str__(self) -> str:
         return self.__myname  #, self.depth, self.__fname, 
@@ -31,8 +34,8 @@ class relationship:
 class link:
     @classmethod
     def add_links(cls, forward: relationship, backward: relationship) -> None:
-        forward.add_link("backward", backward.get_myname(), backward)
-        backward.add_link("forward",  forward.get_myname(),  forward)
+        forward.add_link(BACKWARD, backward.get_myname(), backward)
+        backward.add_link(FORWARD,  forward.get_myname(),  forward)
 
 
     def __get_elmtlength(self, direction: str, ins: relationship) -> int:
@@ -45,7 +48,7 @@ class link:
                 d_link[elmt] = relationship(elmt)
             cls.add_links(forward=d_link[elmt], backward=rel)
             # print("me:", rel.get_myname(), "for:", d_link[elmt].get_myname())
-            if elmt not in d_name or len(d_name[elmt]) == cls.__get_elmtlength(cls, "forward", d_link[elmt]):
+            if elmt not in d_name or len(d_name[elmt]) == cls.__get_elmtlength(cls, FORWARD, d_link[elmt]):
                 continue
             else:
                 cls.link_forward(d_link[elmt], d_link, d_name)
@@ -70,7 +73,7 @@ class search:
     @classmethod
     def get_relation(cls, rel: relationship, direction: str, mode: int = 1, depth: int = 0) -> dict:
         d_result = {}
-        cls.search_relation(rel, d_result, direction, -1 if direction == "forward" else 1, mode, depth)
+        cls.search_relation(rel, d_result, direction, -1 if direction == FORWARD else 1, mode, depth)
         return d_result
 
 if __name__ == "__main__":
