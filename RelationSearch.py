@@ -70,7 +70,7 @@ class search:
     @classmethod
     def get_relation(cls, rel: relationship, direction: str, mode: int = 1, depth: int = 0) -> dict:
         d_result = {}
-        cls.search_relation(rel, d_result, direction, 1 if direction == "forward" else -1, mode, depth)
+        cls.search_relation(rel, d_result, direction, -1 if direction == "forward" else 1, mode, depth)
         return d_result
 
 if __name__ == "__main__":
