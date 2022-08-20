@@ -8,7 +8,13 @@ class relationship:
         self.__link = {FORWARD: {}, BACKWARD: {}}
     
     def __str__(self) -> str:
-        return self.__myname  #, self.depth, self.__fname, 
+        txt  = "type: " + self.__class__.__name__ + '\n'
+        txt += "myname: " + self.__myname + '\n'
+        for key in [FORWARD, BACKWARD]:
+            if any(self.__link[key]):
+                txt += key + ": " + ", ".join(self.get_linkkeys(key)) + '\n'
+
+        return txt
     
     def add_link(self, direction: str, key: str, ins: object) -> None:
         self.__link[direction][key] = ins
