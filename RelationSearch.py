@@ -77,9 +77,15 @@ class search:
             cls.search_relation(d_link[key], d_result, direction, increment, mode, depth + increment)
 
     @classmethod
+    def sort_depth(cls, rel: relationship, d_target: dict) -> None:
+        ordered = sorted(d_target.items(), key=lambda i: i[1])
+        print(ordered)
+
+    @classmethod
     def get_relation(cls, rel: relationship, direction: str, mode: int = 1, depth: int = 0) -> dict:
         d_result = {}
         cls.search_relation(rel, d_result, direction, -1 if direction == FORWARD else 1, mode, depth)
+        cls.sort_depth(rel, d_result)
         return d_result
 
 if __name__ == "__main__":
