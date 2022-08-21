@@ -28,6 +28,18 @@ for key in dict_link.keys():
 #         print("[origin]", key, set(dict_link[key]))
 #     print("[relation]", key, set(link["forward"].keys()), set(link["backward"].keys()))
 
+dict_order = {}
+for elmt in dict_master:
+    print(elmt)
+    dict_order[elmt] = srch.get_relation(dict_master[elmt])
+
+for elmt in sorted(dict_order):
+    print(elmt)
+    for key in dict_order[elmt]:
+        print(key, dict_order[elmt][key])
+        break
+    break
+
 # set_other = set(dict_master.keys()) - set(t_lst)
 # for key in dict_master:
 #     d = {}
