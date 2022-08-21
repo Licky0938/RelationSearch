@@ -66,15 +66,15 @@ class search:
     
     @classmethod
     def search_relation(cls, rel: relationship, d_result:dict, direction: str, increment: int, mode: int = 1, depth: int = 0) -> None:
-        d_link = rel.get_link(direction)
-        for key in d_link.keys():
-            if key in d_result:
-                if abs(d_result[key]) * mode < abs(depth) * mode:
-                    d_result[key] = depth
-                continue
-            else:
-                d_result[key] = depth
-            cls.search_relation(d_link[key], d_result, direction, increment, mode, depth + increment)
+        name = rel.get_myname()
+        if name in d_result:
+            if abs(d_result[name]) * mode < abs(depth) * mode:
+                d_result[name] = depth
+        else:
+            d_result[name] = depth
+            d_link = rel.get_link(direction)
+            for key in d_link.keys():
+                cls.search_relation(d_link[key], d_result, direction, increment, mode, depth + increment)
 
     @classmethod
     def sort_depth(cls, rel: relationship, d_target: dict) -> None:
