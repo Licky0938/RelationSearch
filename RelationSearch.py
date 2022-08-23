@@ -1,30 +1,48 @@
 FORWARD = "forward"
 BACKWARD = "backward"
+HORI = "horizon"
+VERT = "vertical"
+ORDER = "order"
 
 class relationship:
+    __DIRECTION = [FORWARD, BACKWARD]
+    __ELEMENTS  = [HORI, VERT, ORDER]
+
     # initialization
     def __init__(self,myname:str) -> None:
         self.__myname = myname
-        self.__link = {FORWARD: {}, BACKWARD: {}}
+        self.__link = {}
+        for direction in self.__DIRECTION:
+            self.__link[direction] = {}
+            for element in self.__ELEMENTS:
+                self.__link[direction][element] = {}
     
     def __str__(self) -> str:
         txt  = "type: " + self.__class__.__name__ + '\n'
         txt += "myname: " + self.__myname + '\n'
-        for key in [FORWARD, BACKWARD]:
-            if any(self.__link[key]):
-                txt += key + ": " + ", ".join(self.get_linkkeys(key)) + '\n'
+        for direction in self.__DIRECTION:
+            txt += direction + '\n'
+            for element in self.__ELEMENTS:
+                if any(self.__link[direction][element]):
+                    txt += element + ": " + ", ".join(self.get_linkkeys(element)) + '\n'
 
         return txt
-    
-    def add_link(self, direction: str, key: str, ins: object) -> None:
-        self.__link[direction][key] = ins
+
+    # add elements
+    def add_link(self, direction: str, element: str, key: str, item) -> None:
+        self.__link[direction][element][key] = item
     
     # get members
     def get_myname(self) -> str:
         return self.__myname
     
-    def get_link(self, direction: str) -> dict:
-        return self.__link[direction]
+    def get_link(self, direction: str = None, element: str = None) -> dict:
+        if direction is None:
+            return self.__link
+        elif element is None:
+            return self.__link[direction]
+        else:
+            return self.__link[direction][element]
     
     def get_linkall(self) -> dict:
         return self.__link
@@ -37,74 +55,55 @@ class relationship:
 
 # counter = 0
 
-class link:
+class horizon:
     @classmethod
-    def add_links(cls, forward: relationship, backward: relationship) -> None:
-        forward.add_link(BACKWARD, backward.get_myname(), backward)
-        backward.add_link(FORWARD,  forward.get_myname(),  forward)
+    def add_horizon(cls, forward: relationship, backward: relationship) -> None:
+        forward.add_link(BACKWARD, HORI, backward.get_myname(), backward)
+        backward.add_link(FORWARD, HORI,  forward.get_myname(),  forward)
 
 
     def __get_elmtlength(self, direction: str, ins: relationship) -> int:
-        return len(ins.get_link(direction))
+        return len(ins.get_link(direction, HORI))
 
     @classmethod
-    def link_forward(cls, rel: relationship, d_link: dict, d_name: dict) -> None:
+    def link_horizon(cls, rel: relationship, d_link: dict, d_name: dict) -> None:
         for elmt in d_name[rel.get_myname()]:
             if elmt not in d_link:
                 d_link[elmt] = relationship(elmt)
-            cls.add_links(forward=d_link[elmt], backward=rel)
-            # print("me:", rel.get_myname(), "for:", d_link[elmt].get_myname())
+            cls.add_horizon(forward=d_link[elmt], backward=rel)
             if elmt not in d_name or len(d_name[elmt]) == cls.__get_elmtlength(cls, FORWARD, d_link[elmt]):
                 continue
             else:
-                cls.link_forward(d_link[elmt], d_link, d_name)
+                cls.link_horizon(d_link[elmt], d_link, d_name)
 
-class search:
-    # initialization
-    def __init__(self) -> None:
-        self.__hierarchy = {}
-    
+class vertical:
     @classmethod
-    def search_relation(cls, rel: relationship, d_result:dict, direction: str, increment: int, mode: int = 1, depth: int = 0) -> None:
-        name = rel.get_myname()
-        if name in d_result:
-            if abs(d_result[name]) * mode < abs(depth) * mode:
-                d_result[name] = depth
-        else:
-            d_result[name] = depth
-            d_link = rel.get_link(direction)
-            for key in d_link.keys():
-                cls.search_relation(d_link[key], d_result, direction, increment, mode, depth + increment)
+    def search_vertical(cls, rel: relationship, d_vertical:dict, direction: str, increment: int, mode: int = 1, depth: int = 0) -> None:
+        d_link = rel.get_link(direction, HORI)
+        for key in d_link:
+            if key in d_vertical:
+                if abs(d_vertical[key]) * mode < abs(depth) * mode:
+                    d_vertical[key] = depth
+                continue
+            else:
+                d_vertical[key] = depth
+            cls.search_vertical(d_link[key], d_vertical, direction, increment, mode, depth + increment)
 
     @classmethod
-    def sort_depth(cls, rel: relationship, d_target: dict) -> list:
-        ordered = sorted(d_target.items(), key=lambda i: i[1])
+    def sort_vertical(cls, rel: relationship, d_target: dict, direction: str, desc: bool = False) -> None:
+        ordered = sorted(d_target.items(), key=lambda i: i[1], reverse=desc)
         for i in range(len(ordered)):
             ordered[i] = ordered[i][0]
-        print(ordered)
+        rel.add_link(direction, ORDER, "sorted", ordered)
 
     @classmethod
-    def get_relation(cls, rel: relationship, mode: int = -1, depth: int = 0) -> dict:
-        d_result = {FORWARD: {}, BACKWARD: {}}
-        cls.search_relation(rel, d_result[FORWARD], FORWARD, -1, mode, depth)
-        cls.search_relation(rel, d_result[BACKWARD], BACKWARD, 1, mode, depth)
-        cls.sort_depth(rel, d_result[FORWARD])
-        # cls.sort_depth(rel, d_result[BACKWARD])
-        return d_result
+    def get_vertical(cls, rel: relationship, mode: int = -1, depth: int = 0) -> None:
+        cls.search_vertical(rel, rel.get_link(FORWARD, VERT), FORWARD, -1, mode, depth - 1)
+        cls.search_vertical(rel, rel.get_link(BACKWARD, VERT), BACKWARD, 1, mode, depth + 1)
+        cls.sort_vertical(rel, rel.get_link(FORWARD, VERT), FORWARD, desc=True)
+        cls.sort_vertical(rel, rel.get_link(BACKWARD, VERT), BACKWARD)
 
 if __name__ == "__main__":
     from readxlsx import readxlsx
-    # FILENAME = "jobconnection.xlsx"
-    # linkval = readxlsx(FILENAME, "Sheet1")
-    # dict_link = linkval.get_link(s_col=1, e_col=2)
-    # dict_master = {}
-    # for key in dict_link.keys():
-    #     dict_master[key] = relationship(key)
-
-    # for key in sorted(dict_link.keys(), reverse=True):
-    #     # counter = 0
-    #     link_forward(dict_master[key], dict_master, dict_link)
-    #     print("[System]", key, "linked")
-
-    # for key in sorted(dict_master.keys()):
-    #     print(dict_master[key].get_myname(), list(dict_master[key].get_forkeys()), list(dict_master[key].get_backkeys()))
+    FILENAME = "jobconnection.xlsx"
+    linkval = readxlsx(FILENAME, 0)
