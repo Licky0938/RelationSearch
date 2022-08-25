@@ -29,36 +29,28 @@ class readxlsx:
         return self.ws.iter_rows(min_row=s_row, max_row=e_row, min_col=s_col, max_col=e_col)
     
     # public functions
-    def get_targetlist(self, col: int) -> list:
-        line = self.__getgen_bycol(col, col)
-        list_target = []
-        for row in line:
-            for cell in row:
-                list_target.append(cell.value) 
-        return list_target
+    def get_targetset(self, start: int, end: int = None) -> set:
+        if end is None:
+            end = start
+        return set(self.__getgen_bycol(start, end))
 
     def get_valuelist_bycol(self, s_col: int, e_col:int) -> list:
         t_2d = self.__getgen_bycol(s_col, e_col)
         return ([[cell.value for cell in row] for row in t_2d])
     
-    def gen_linkdict(self, l_2d: list, target:list = None) -> dict:
+    def gen_linkdict(self, l_2d: list, target:set = None) -> dict:
         link = {}
         if len(l_2d[0]) < 2:
             print("[Error]", self, "does not match size")
             return None
         if target is None:
-            for l_val in l_2d:
+            target = set(x[0] for x in l_2d)
+        for l_val in l_2d:
+            if len(set(l_val) & target) > 0:
                 if l_val[0] not in link:
                     link[l_val[0]] = []
                 for i in range(1, len(l_val)):
                     link[l_val[0]].append(l_val[i])
-        else:
-            for l_val in l_2d:
-                if len(set(l_val) & set(target)) > 0:
-                    if l_val[0] not in link:
-                        link[l_val[0]] = []
-                    for i in range(1, len(l_val)):
-                        link[l_val[0]].append(l_val[i])
 
         print("[System]", "link dictionary generated")
         return link
