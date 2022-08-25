@@ -2,7 +2,7 @@ from readxlsx import readxlsx as rxlx
 from RelationSearch import relationship as rels
 from RelationSearch import horizon as hrzn
 from RelationSearch import vertical as vtcl
-from RelationSearch import FORWARD, BACKWARD, HORI, VERT, ORDER
+from RelationSearch import FORWARD, BACKWARD, HORI, VERT, ORDER, V_SORT
 
 sourcefile = "jobconnection.xlsx"
 targetfile = "jobtarget.xlsx"
@@ -10,10 +10,10 @@ targetfile = "jobtarget.xlsx"
 
 s_xlx = rxlx(sourcefile, 0)
 t_xlx = rxlx(targetfile, 0)
-t_lst = t_xlx.get_targetlist(1)
+t_lst = t_xlx.get_targetset(1)
 
 # dictionary[ownname] = [jobname0, jobname1, jobname2, ...]
-dict_link = s_xlx.get_link(1, 2, t_lst)
+dict_link = s_xlx.get_link(1, 2)
 # dictionary[ownname] = rels.relationship(ownname)
 dict_master = {}
 
