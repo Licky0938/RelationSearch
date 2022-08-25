@@ -3,6 +3,7 @@ BACKWARD = "backward"
 HORI = "horizon"
 VERT = "vertical"
 ORDER = "order"
+V_SORT = "v_sort"
 
 class relationship:
     __DIRECTION = [FORWARD, BACKWARD]
@@ -94,7 +95,7 @@ class vertical:
         ordered = sorted(d_target.items(), key=lambda i: i[1], reverse=desc)
         for i in range(len(ordered)):
             ordered[i] = ordered[i][0]
-        rel.add_link(direction, ORDER, "sorted", ordered)
+        rel.add_link(direction, ORDER, V_SORT, ordered)
 
     @classmethod
     def get_vertical(cls, rel: relationship, mode: int = -1, depth: int = 0) -> None:
