@@ -26,4 +26,9 @@ for key in dict_link:
 for elmt in dict_master:
     vtcl.get_vertical(dict_master[elmt])
 
-set_extract = set(dict_master.keys()) - set(t_lst)
+with open("test.csv", mode="w") as f:
+    for key in dict_master:
+        f.write(key + ',' + ','.join(dict_master[key].get_link(FORWARD,  ORDER)[V_SORT]) + '\n')
+        f.write(      ',' + ','.join(dict_master[key].get_link(BACKWARD, ORDER)[V_SORT]) + '\n')
+
+set_extract = set(dict_master.keys()) - t_lst
