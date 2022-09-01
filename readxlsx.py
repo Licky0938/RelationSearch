@@ -32,7 +32,12 @@ class readxlsx:
     def get_targetset(self, start: int, end: int = None) -> set:
         if end is None:
             end = start
-        return set(self.__getgen_bycol(start, end))
+        t_md = self.__getgen_bycol(start, end)
+        s_md = set()
+        for row in t_md:
+            for cell in row:
+                s_md.add(cell.value)
+        return s_md
 
     def get_valuelist_bycol(self, s_col: int, e_col:int) -> list:
         t_2d = self.__getgen_bycol(s_col, e_col)
