@@ -2,7 +2,8 @@
 Search leading and following relations
 
 ## RelationSearch.py
-    This script gives you effective contena and methods which can store, connect, serach and get huge relation information.
+    This script gives you effective contena and methods,
+        which can store, connect, serach and get huge relation information.
     It consist of vary 3 classes
 
 ### class relationship(myname: str)
