@@ -2,7 +2,7 @@
 Search leading and following relations
 
 ## RelationSearch.py
-    This gives you effective contena which can store, connect, serach and get huge relation information.
+    This script gives you effective contena which can store, connect, serach and get huge relation information.
     It consist of vary 3 classes
 
 ### class relationship(myname: str)
@@ -15,7 +15,7 @@ Search leading and following relations
     This class searches connected relations vertically.
 
 ## readxlsx.py
-    This gives you easy access to data files.
+    This script gives you easy access to data files.
 
 ### class readxlsx
     This class reads ".xlsx" files and form data so that RelationSerach methods can use directly.
