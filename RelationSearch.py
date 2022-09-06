@@ -1,13 +1,13 @@
 FORWARD = "forward"
 BACKWARD = "backward"
-HORI = "horizon"
-VERT = "vertical"
+HZTL = "horizontal"
+VTCL = "vertical"
 ORDER = "order"
 V_SORT = "v_sort"
 
 class relationship:
     __DIRECTION = [FORWARD, BACKWARD]
-    __ELEMENTS  = [HORI, VERT, ORDER]
+    __ELEMENTS  = [HZTL, VTCL, ORDER]
 
     # initialization
     def __init__(self,myname:str) -> None:
@@ -59,12 +59,12 @@ class relationship:
 class horizon:
     @classmethod
     def add_horizon(cls, forward: relationship, backward: relationship) -> None:
-        forward.add_link(BACKWARD, HORI, backward.get_myname(), backward)
-        backward.add_link(FORWARD, HORI,  forward.get_myname(),  forward)
+        forward.add_link(BACKWARD, HZTL, backward.get_myname(), backward)
+        backward.add_link(FORWARD, HZTL,  forward.get_myname(),  forward)
 
 
     def __get_elmtlength(self, direction: str, ins: relationship) -> int:
-        return len(ins.get_link(direction, HORI))
+        return len(ins.get_link(direction, HZTL))
 
     @classmethod
     def link_horizon(cls, rel: relationship, d_link: dict, d_name: dict) -> None:
@@ -80,7 +80,7 @@ class horizon:
 class vertical:
     @classmethod
     def search_vertical(cls, rel: relationship, d_vertical:dict, direction: str, increment: int, mode: int = 1, depth: int = 0) -> None:
-        d_link = rel.get_link(direction, HORI)
+        d_link = rel.get_link(direction, HZTL)
         for key in d_link:
             if key in d_vertical:
                 if abs(d_vertical[key]) * mode < abs(depth) * mode:
@@ -99,10 +99,10 @@ class vertical:
 
     @classmethod
     def get_vertical(cls, rel: relationship, mode: int = -1, depth: int = 0) -> None:
-        cls.search_vertical(rel, rel.get_link(FORWARD, VERT), FORWARD, -1, mode, depth - 1)
-        cls.search_vertical(rel, rel.get_link(BACKWARD, VERT), BACKWARD, 1, mode, depth + 1)
-        cls.sort_vertical(rel, rel.get_link(FORWARD, VERT), FORWARD, desc=True)
-        cls.sort_vertical(rel, rel.get_link(BACKWARD, VERT), BACKWARD)
+        cls.search_vertical(rel, rel.get_link(FORWARD, VTCL), FORWARD, -1, mode, depth - 1)
+        cls.search_vertical(rel, rel.get_link(BACKWARD, VTCL), BACKWARD, 1, mode, depth + 1)
+        cls.sort_vertical(rel, rel.get_link(FORWARD, VTCL), FORWARD, desc=True)
+        cls.sort_vertical(rel, rel.get_link(BACKWARD, VTCL), BACKWARD)
 
 if __name__ == "__main__":
     from readxlsx import readxlsx
