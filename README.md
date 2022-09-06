@@ -8,14 +8,14 @@ It consist of vary 3 classes.
 ### class relationship(myname: str)
 This class stores and gives infornmations of relation.
 
-### class horizontal
+### class horizontal: classmethod
 This class connects relations horizontally.
 
-### class zertical
+### class zertical: classmethod
 This class searches connected relations vertically.
 
 ## readxlsx.py
 This script gives you easy access to data files.
 
-### class readxlsx
+### class readxlsx(bookname: str, sheetnum: int)
 This class reads ".xlsx" files and form data so that RelationSerach methods can use directly.
