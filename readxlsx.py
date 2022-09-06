@@ -60,7 +60,7 @@ class readxlsx:
         print("[System]", "link dictionary generated")
         return link
     
-    def get_link(self, s_col: int, e_col: int, target: list =None) -> dict:
+    def get_link(self, s_col: int, e_col: int, target: set = None) -> dict:
         return self.gen_linkdict(self.get_valuelist_bycol(s_col, e_col), target)
 
 
