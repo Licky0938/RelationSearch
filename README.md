@@ -11,7 +11,7 @@ This class stores and gives infornmations of relation.
 ### class horizontal: classmethod
 This class connects relations horizontally.
 
-### class zertical: classmethod
+### class vertical: classmethod
 This class searches connected relations vertically.
 
 ## readxlsx.py
