@@ -56,7 +56,7 @@ class relationship:
 
 # counter = 0
 
-class horizon:
+class horizontal:
     @classmethod
     def add_horizon(cls, forward: relationship, backward: relationship) -> None:
         forward.add_link(BACKWARD, HZTL, backward.get_myname(), backward)
