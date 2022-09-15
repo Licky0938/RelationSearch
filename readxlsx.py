@@ -1,10 +1,10 @@
 import openpyxl
 
 class readxlsx:
-    def __init__(self, bookname: str, sheetnum: int) -> None:
+    def __init__(self, bookname: str, sheetnum: int = 0) -> None:
         self.wb = openpyxl.load_workbook(bookname)
         self.ws = self.wb.worksheets[sheetnum]
-        print("[System]", bookname, "read")
+        print("[System]", "get", bookname)
 
     # private functions
     def __get_rowrange(self, col: int) -> int:
@@ -20,7 +20,6 @@ class readxlsx:
                     keep = row
                 else:
                     return keep, row - 1
-
             indata = sts
             row += 1
     
